@@ -93,7 +93,7 @@ all: $(OBJDIR) $(NAME)
 
 $(NAME): $(OBJS)
 	@$(MAKE) -C $(LIBDIR)
-	@echo "Compiling ft_select..."
+	@echo "Compiling minishell..."
 	@$(CC) $(OBJS) -o $@ $(LIBS) $(CFLAGS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c

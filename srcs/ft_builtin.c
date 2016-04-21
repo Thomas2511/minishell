@@ -33,24 +33,23 @@ static int				ft_setenv(char **cmd, t_mlist *mlist)
 	char				*bis;
 	char				*join;
 
-	i = 0;
-	if ((i = ft_count_tab(cmd)) == 1)
+	i = ft_count_tab(cmd);
+	if (i <= 1)
 		return (ft_env(cmd, mlist));
 	if (i > 3)
 		return (!ft_putendl_fd("setenv: Too many arguments.", 2));
 	join = ft_strjoin(cmd[1], "=");
-	bis = join;
+	bis = ft_strjoin(join, cmd[2]);
 	free(join);
-	join = ft_strjoin(bis, cmd[2]);
-	free(bis);
 	if ((tmp = ft_get_env(cmd[1], mlist->env)) != NULL)
 	{
 		free(tmp->content);
-		tmp->content = join;
+		tmp->content = ft_strdup(bis);
 		return (1);
 	}
-	ft_lstpushback(&(mlist->env), join, ft_strlen(join) + 1);
-	free(join);
+	else
+		ft_lstpushback(&(mlist->env), bis, ft_strlen(bis) + 1);
+	free(bis);
 	return (1);
 }
 
