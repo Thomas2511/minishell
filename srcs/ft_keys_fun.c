@@ -67,7 +67,6 @@ void			ft_ctrl_d(t_dlist **list, int visual, t_mlist *mlist)
 	g_idx = 0;
 	ft_dlist_clear(list);
 	ft_list_clear(&(mlist->env));
-	ft_close_fdlist(&(mlist->fdlist));
 	free(mlist);
 	free(g_cmd);
 	ft_putendl("");
