@@ -28,7 +28,7 @@ SRCDIR	= $(ROOT)/srcs
 INCDIR	= $(ROOT)/includes
 
 # compil flags
-CFLAGS	= -I $(INCDIR) -Wall -Wextra -Werror
+CFLAGS	= -I $(INCDIR) -Wall -Wextra -Werror -g
 
 # source files
 SRC		= ft_atoi.c \

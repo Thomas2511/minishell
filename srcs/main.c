@@ -1,93 +1,55 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2013/12/28 11:15:15 by tdieumeg          #+#    #+#             */
-/*   Updated: 2014/03/17 20:43:22 by tdieumeg         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
+#include <unistd.h>
+#include <signal.h>
 #include "minishell.h"
+#include "libft.h"
 
-int				ft_compute(t_token **list, t_mlist *mlist)
+static int		shell_initialization(t_env_list **sh_env, const char **env)
 {
-	t_node		*tree;
-
-	tree = ft_parser(*list);
-	ft_expr_handler(tree, mlist);
-	ft_token_clear(list);
-	ft_clear_tree(&tree);
-	return (1);
-}
-
-static int		ft_init(char **buff, t_mlist *mlist)
-{
-	signal(SIGINT, ft_sighandler);
-	ft_putstr(PROMPT);
-	ft_set_term();
-	*buff = ft_read_keys(ft_log_to_dlist(), 0, mlist);
-	ft_reset_term();
-	ft_bzero(g_cmd, BUFF_SIZE);
-	g_idx = 0;
+	signal(SIGINT, signals_modification);
+	signal(SIGQUIT, signals_modification);
+	signal(SIGCONT, signals_modification);
+	if (*env)
+		env_duplicate(sh_env, env);
+	else
+		env_rebuild(sh_env);
 	return (0);
 }
 
-void			ft_checktty(t_mlist *mlist)
+static int		shell_main_loop(t_env_list **sh_env)
 {
-	char		buff[BUFF_SIZE];
-	char		*join;
-	char		*tmp;
-	t_token		*list;
-	int			len;
+	int			bytes;
+	char		*input;
+	char		buffer[BUFF_SIZE + 1];
 
-	list = NULL;
-	join = NULL;
-	ft_bzero(buff, BUFF_SIZE);
-	if (!isatty(0))
+	input = NULL;
+	display_prompt();
+	while ((bytes = read(STD_IN, buffer, BUFF_SIZE)) > 0)
 	{
-		while ((len = read(0, buff, BUFF_SIZE - 1)) > 0)
+		buffer[bytes] = '\0';
+		utility_join(&input, buffer, 0);
+		if (ft_strchr(input, '\n'))
 		{
-			buff[len] = '\0';
-			tmp = join;
-			join = ft_strjoin(tmp, buff);
-			free(tmp);
+			input[ft_strlen(input) - 1] = '\0';
+			command_handler(&input, sh_env);
+			ft_memdel((void **)&input);
+			ft_bzero(buffer, BUFF_SIZE);
+			display_prompt();
 		}
-		ft_lexer(join, &list, 0);
-		free(join);
-		ft_get_bquote(&list, mlist);
-		if (list)
-			ft_compute(&list, mlist);
-		exit(EXIT_SUCCESS);
 	}
+	ft_putendl("");
+	ft_memdel((void **)&input);
+	return (0);
 }
 
-int				main(int ac, char **av, char **environ)
+int				main(int ac, char **av, char **env)
 {
-	char		*buff;
-	t_token		*list;
-	t_mlist		*mlist;
+	t_env_list		*sh_env;
 
-	(void)ac;
 	(void)av;
-	buff = NULL;
-	list = NULL;
-	mlist = (t_mlist*)malloc(sizeof(mlist));
-	mlist->env = ft_duplicate(environ);
-	ft_reset_std();
-	if (!mlist->env)
-		exit(!ft_putendl_fd("minishell: Restore env before execution.", 2));
-	ft_checktty(mlist);
-	while (42)
-	{
-		ft_init(&buff, mlist);
-		ft_lexer(ft_analyser(buff, mlist), &list, 1);
-		free(buff);
-		ft_get_bquote(&list, mlist);
-		if (list)
-			ft_compute(&list, mlist);
-	}
+	(void)ac;
+	sh_env = NULL;
+	shell_initialization(&sh_env, (const char **)env);
+	shell_main_loop(&sh_env);
+	env_list_free(&sh_env);
 	return (0);
 }

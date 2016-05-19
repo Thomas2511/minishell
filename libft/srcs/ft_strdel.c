@@ -13,13 +13,11 @@
 #include <stdlib.h>
 #include "libft.h"
 
-char		*ft_strdel(char **as)
+void		ft_strdel(char **as)
 {
 	if (as)
 	{
 		free(*as);
 		*as = NULL;
-		return (*as);
 	}
-	return (NULL);
 }

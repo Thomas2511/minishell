@@ -1,349 +1,135 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_minishell3.h                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2014/02/05 12:42:10 by tdieumeg          #+#    #+#             */
-/*   Updated: 2014/03/17 20:56:35 by tdieumeg         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <term.h>
-# include <termios.h>
-# include <signal.h>
-# include <sys/types.h>
-# include <sys/ioctl.h>
-# include <sys/stat.h>
-# include <stdlib.h>
-# include <fcntl.h>
-# include <dirent.h>
 # include "libft.h"
 
-# define BUFF_SIZE	8192
-# define COM		0
-# define COM_ARG	1
-# define REDIRECT	2
-# define PIPE_EXP	3
-# define EXPR		4
-# define WORD		5
-# define SPECIAL	6
-# define BQUOTE		7
-# define LEFT_RED	8
-# define DLEFT_RED	9
-# define RIGHT_RED	10
-# define DRIGHT_RED	11
-# define D_AND		12
-# define D_OR		13
-# define LOGIC		14
-# define VAR		15
-# define ALT_U_A	1096489755
-# define ALT_D_A	1113266971
-# define ALT_R_A	1130044187
-# define ALT_L_A	1146821403
-# define U_ARROW	4283163
-# define D_ARROW	4348699
-# define R_ARROW	4414235
-# define L_ARROW	4479771
-# define HOME		4741915
-# define END		4610843
-# define SPACE		32
-# define DELETE		2117294875
-# define BACKSPACE	127
-# define RETURN		10
-# define TAB		9
-# define CTRL_D		4
-# define ALT_C		42947
-# define PROMPT		"tdieumeg_minishell> "
+# define PATH_MAX 1024
+# define BUFF_SIZE 1024
+# define NUMBER_OF_SIGNALS 32
+# define NUMBER_OF_BUILTINS 5
+# define ERROR_FUNCTIONS 2
+# define STD_IN 0
+# define STD_OUT 1
+# define STD_ERR 2
+# define ARB_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-extern char			*g_cmd;
-extern int			g_idx;
+# define NORMAL "\x1B[0m"
+# define RED "\x1B[31m"
+# define GREEN "\x1B[32m"
+# define YELLOW "\x1B[33m"
+# define BLUE "\x1B[34m"
+# define MAGENTA "\x1B[35m"
+# define CYAN "\x1B[36m"
+# define WHITE "\x1B[37m"
 
-typedef struct		s_token
+# define SPECIAL_CHARACTERS ";"
+# define SEPARATION_CHARACTERS " \t"
+
+typedef struct			s_env_list
 {
-	struct s_token	*next;
-	char			*data;
-	char			type;
-}					t_token;
-
-typedef struct		s_fdlist
-{
-	t_list			*head;
-	t_list			*cur;
-}					t_fdlist;
-
-typedef struct		s_node
-{
-	struct s_node	*left;
-	struct s_node	*right;
-	char			*data;
-	char			type;
-}					t_node;
-
-typedef struct		s_mlist
-{
-	t_fdlist		*fdlist;
-	t_list			*env;
-}					t_mlist;
-
-typedef struct		s_copy
-{
-	char			*copy;
-	int				visual_mode;
-	int				start;
-}					t_copy;
-
-typedef	struct		s_keys
-{
-	int				key;
-	void			(*f)(t_dlist **, int visual, t_mlist *mlist);
-}					t_keys;
-
-typedef struct		s_builtin
-{
-	char			*cmd;
-	int				(*f)(char **, t_mlist *);
-}					t_builtin;
-
-typedef enum		e_state
-{
-	L_MAIN = 0,
-	L_SPEC,
-	L_BQUOTEM,
-	L_BQUOTED,
-	L_DQUOTE,
-	L_QUOTE
-}					t_state;
+	struct s_env_list	*next;
+	char				*key;
+	char				*value;
+}						t_env_list;
 
 /*
-** main.c
+** environment.c
 */
-int					ft_compute(t_token **list, t_mlist *mlist);
+int						env_duplicate(t_env_list **sh_env, const char **env);
+int						env_rebuild(t_env_list **sh_env);
+char					*env_get(const t_env_list *sh_env, const char *key);
+int						env_insert(t_env_list **sh_env, const char *key,
+		const char *value);
 
 /*
-** ft_analyser.c
+** arr_of_arr.c
 */
-char				*ft_analyser(char *cmd, t_mlist *mlist);
+int						arr_of_arr_count(const char **arr_of_arr);
+int						arr_of_arr_free(char ***arr);
 
 /*
-** ft_lexer.c
+** env_list.c
 */
-void				ft_lexer(char *str, t_token **list, int save_com);
+t_env_list				*env_list_new(const char *key, const char *value);
+int						env_list_push(t_env_list **sh_env, t_env_list *new);
+int						env_list_del_if(t_env_list **sh_env, const char *value);
+int						env_list_free(t_env_list **sh_env);
 
 /*
-** ft_lexer_fun.c
+** env_list_copy.c
 */
-char				is_special(char *str);
-void				ft_lexbquote(char **str, char *buf, int *i, t_token **list);
-void				ft_lexdquote(char **str, char *buf, int *i, t_token **list);
-void				ft_lexquote(char **str, char *buf, int *i, t_token **list);
-void				ft_lexmain(char **str, char *buf, int *i, t_token **list);
+int						env_list_copy(t_env_list **copy, t_env_list **original);
 
 /*
-** ft_parser.c
+** sh_error.c
 */
-t_node				*ft_parser(t_token *list);
+int						sh_error(const int error_code, const char **command);
 
 /*
-** ft_parse_fun.c
+** commands.c
 */
-char				parse_pipe(t_token **list, t_node **tree);
+int						command_handler(char **cmd, t_env_list **sh_env);
 
 /*
-** ft_token.c
+** lexer.c
 */
-int					ft_token_clear(t_token **list);
-char				ft_tokenstep(t_token **list);
-t_token				*ft_tokenpushback(t_token **token, char *data, char type);
-t_token				*ft_token_split(char *s, char *special);
+int						lexer(char **cmd, t_list **tokens);
 
 /*
-** ft_node.c
+** builtin.c
 */
-int					ft_clear_tree(t_node **tree);
-t_node				*ft_nodenew(char type);
-void				ft_nodeaddlast(t_node **tree, char left, t_node *node);
+int						builtin_check(const char **command,
+		t_env_list **sh_env, t_list **tokens);
+int						builtin_display_env(t_env_list **sh_env);
 
 /*
-** ft_checkpath.c
+** builtin_env.c
 */
-char				*ft_checkpath(char *cmd, char **environ);
+int						builtin_env(const char **command,
+		t_env_list **sh_env, t_list **tokens);
+int						builtin_env_execution(const char **env_command,
+		t_env_list **copy, char verbose, int index);
 
 /*
-** ft_envman.c
+** builtin_env_parse.c
 */
-t_list				*ft_duplicate(char **environ);
-t_list				*ft_get_env(char *get, t_list *env);
-char				**ft_tochar(t_list *env);
+int						builtin_env_parse(const char **env_command,
+		t_env_list **copy);
 
 /*
-** ft_signhandler.c
+** builtin_cd.c
 */
-void				ft_sighandler(int signal);
-void				ft_sighand2(int signal);
+int						builtin_cd(const char **env_command,
+		t_env_list **copy, t_list **tokens);
 
 /*
-** ft_builtin.c
+** builtin_cd_test.c
 */
-int					ft_builtin(t_mlist *mlist, t_node *tree);
+int						test_destination(char **end, int depth);
 
 /*
-** ft_is_builtin.c
+** display.c
 */
-int					ft_is_builtin(char *cmd);
+int						display_prompt(void);
 
 /*
-** ft_cd.c
+** utility.c
 */
-int					ft_cd(char **cmd, t_mlist *mlist);
+int						utility_count_to_spe(const t_list *alist);
+int						utility_list_len(const t_env_list *alist);
+int						utility_join(char **str, char *str2,
+		const char arg_to_delete);
+int						utility_list_clear(t_list **alist);
 
 /*
-** ft_cd_fun.c
+** execution.c
 */
-void				ft_cd_freejoin(t_list *tmp, const char *str, char *to_join);
+int						execution(char **command, char **env);
 
 /*
-** ft_echo.c
+** signals.c
 */
-int					ft_echo(char **cmd, t_mlist *mlist);
-
-/*
-** ft_echo_utf.c
-*/
-void				ft_itoutf(int nb);
-
-/*
-** ft_notfnd.c
-*/
-void				ft_notfnd(char *cmd);
-
-/*
-** ft_pfd_manage.c
-*/
-void				ft_pfd_manage(int *pfd, int *pfd2);
-void				ft_pfd_close(int *pfd);
-
-/*
-** ft_cmd_handler.c
-*/
-char				**ft_arg_handler(t_node *tree, char *cmd);
-int					ft_cmd_handler(t_node *tree, t_mlist *mlist, int **tpfd);
-
-/*
-** ft_red_handler.c
-*/
-int					ft_red_handler(t_node *tree, t_mlist *mlist, int check);
-
-/*
-** ft_red_open.c
-*/
-void				ft_red_open(t_fdlist **fdlist, t_node *tree);
-
-/*
-** ft_token_handler.c
-*/
-int					ft_expr_handler(t_node *tree, t_mlist *mlist);
-
-/*
-** ft_get_bquote.c
-*/
-void				ft_get_bquote(t_token **list, t_mlist *mlist);
-
-/*
-** ft_utility_fun.c
-*/
-struct winsize		*ft_get_winsz(void);
-int					*ft_reset_std(void);
-t_copy				*ft_get_copy(void);
-char				*ft_insertchar(char c, char *cmd, int idx);
-void				ft_close_fdlist(t_fdlist **fdlist);
-
-/*
-** ft_term_fun.c
-*/
-int					ft_set_term(void);
-int					ft_reset_term(void);
-
-/*
-** ft_read_keys.c
-*/
-char				*ft_read_keys(t_dlist *list, int noctrld, t_mlist *mlist);
-
-/*
-** ft_keys_fun.c
-*/
-void				ft_backspace(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_delete(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_home(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_end(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_ctrl_d(t_dlist **list, int visual, t_mlist *mlist);
-
-/*
-** ft_keys_fun2.c
-*/
-void				ft_u_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_d_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_l_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_r_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_tab(t_dlist **list, int visual, t_mlist *mlist);
-
-/*
-** ft_keys_fun3.c
-*/
-void				ft_alt_u_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_alt_d_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_alt_l_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_alt_r_arrow(t_dlist **list, int visual, t_mlist *mlist);
-void				ft_return(t_dlist **list, int visual, t_mlist *mlist);
-
-/*
-** ft_keys_fun4.c
-*/
-void				ft_tab(t_dlist **list, int visual, t_mlist *mlist);
-
-/*
-** ft_putchar_tc.c
-*/
-int					ft_putchar_tc(int c);
-
-/*
-** ft_log.c
-*/
-t_dlist				*ft_log_to_dlist(void);
-void				ft_append_cmd_to_log(char *cmd);
-
-/*
-** ft_autocomp.c
-*/
-char				*ft_autocomp(char *fullpath, int exec, t_mlist *mlist);
-
-/*
-** ft_autocomp_fun.c
-*/
-char				*ft_complete(t_list *file_l, char *filename);
-
-/*
-** ft_select.c
-*/
-char				*ft_select(t_list *file_l, char *filename);
-
-/*
-** ft_slct_dep.c
-*/
-char				*ft_slct_dep(t_list *file_l, int *pfd);
-
-/*
-** get_next_line.c
-*/
-int					get_next_line(int fd, char **line);
-
-/*
-** ft_error.c
-*/
-int					ft_error(char *filename, char *error);
+void					signals_modification(int sig);
 
 #endif

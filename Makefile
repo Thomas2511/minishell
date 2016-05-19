@@ -28,61 +28,26 @@ LIBDIR	= $(ROOT)/libft
 LFTINC	= $(LIBDIR)/includes
 
 # compil flags
-CFLAGS	= -I $(INCDIR) -I $(LFTINC) -Wall -Wextra -Werror
-LIBS	= -L $(LIBDIR) -lft -ltermcap
+CFLAGS	= -I $(INCDIR) -I $(LFTINC) -Wall -Wextra -Werror -g
+LIBS	= -L $(LIBDIR) -lft
 
 SRC		= main.c \
-		  ft_analyser.c \
-		  ft_lexer.c \
-		  ft_lexer_fun.c \
-		  ft_parser.c \
-		  ft_parse_fun.c \
-		  ft_token.c \
-		  ft_node.c \
-		  ft_builtin.c \
-		  ft_is_builtin.c \
-		  ft_cd.c \
-		  ft_cd_fun.c \
-		  ft_echo.c \
-		  ft_echo_utf.c \
-		  ft_checkpath.c \
-		  ft_envman.c \
-		  ft_notfnd.c \
-		  ft_sighandler.c \
-		  ft_token_handler.c \
-		  ft_pfd_manage.c \
-		  ft_cmd_handler.c \
-		  ft_red_handler.c \
-		  ft_get_bquote.c \
-		  ft_red_open.c \
-		  ft_term_fun.c \
-		  ft_read_keys.c \
-		  ft_keys_fun.c \
-		  ft_keys_fun2.c \
-		  ft_keys_fun3.c \
-		  ft_keys_fun4.c \
-		  ft_putchar_tc.c \
-		  ft_log.c \
-		  ft_error.c \
-		  ft_utility_fun.c \
-		  ft_autocomp.c \
-		  ft_autocomp_fun.c \
-		  ft_select.c \
-		  ft_slct_dep.c \
-		  ft_slct_dep2.c \
-		  draw_list.c \
-		  key_down.c \
-		  key_up.c \
-		  key_escape.c \
-		  key_return.c \
-		  key_right.c \
-		  key_left.c \
-		  keys.c \
-		  list.c \
-		  move.c \
+		  environment.c \
+		  arr_of_arr.c \
+		  env_list.c \
+		  env_list_copy.c \
+		  commands.c \
+		  lexer.c \
+		  builtin.c \
+		  builtin_env.c \
+		  builtin_env_parse.c \
+		  builtin_cd.c \
+		  builtin_cd_test.c \
+		  display.c \
+		  utility.c \
+		  execution.c \
 		  signals.c \
-		  write.c \
-		  get_next_line.c
+		  sh_error.c 
 
 # obj
 OBJS	= $(patsubst %.c, $(OBJDIR)/%.o, $(SRC))

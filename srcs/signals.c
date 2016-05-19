@@ -1,33 +1,38 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jlinden <jlinden@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2014/01/09 11:26:48 by jlinden           #+#    #+#             */
-/*   Updated: 2014/03/18 19:19:10 by jlinden          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <signal.h>
-#include <sys/ioctl.h>
-#include <termios.h>
-#include <unistd.h>
-#include "ft_select.h"
+#include "minishell.h"
+#include "libft.h"
 
-static void		signal_handler(int sig)
+int				signals_sigint(void)
 {
-	if (sig == SIGINT || sig == SIGQUIT || sig == SIGTERM)
-		proper_exit(EXIT_FAILURE);
-	else if (sig == SIGWINCH)
-		draw_list(g_slct);
+	ft_putendl("");
+	display_prompt();
+	return (0);
 }
 
-void			load_signals(void)
+int				signals_sigtstp(void)
 {
-	signal(SIGTERM, signal_handler);
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
-	signal(SIGWINCH, signal_handler);
+	return (0);
+}
+
+int				signals_sigquit(void)
+{
+	return (0);
+}
+
+int				signals_sigcont(void)
+{
+	display_prompt();
+	return (0);
+}
+
+void			signals_modification(int sig)
+{
+	int 		(*f_ptr[NUMBER_OF_SIGNALS])(void);
+
+	f_ptr[SIGINT] = signals_sigint;
+	f_ptr[SIGTSTP] = signals_sigtstp;
+	f_ptr[SIGQUIT] = signals_sigquit;
+	f_ptr[SIGCONT] = signals_sigcont;
+	if (sig <= NUMBER_OF_SIGNALS)
+		(f_ptr[sig])();
 }
