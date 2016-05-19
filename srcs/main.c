@@ -7,7 +7,7 @@ static int		shell_initialization(t_env_list **sh_env, const char **env)
 {
 	signal(SIGINT, signals_modification);
 	signal(SIGQUIT, signals_modification);
-	signal(SIGCONT, signals_modification);
+	signal(SIGTSTP, signals_modification);
 	if (*env)
 		env_duplicate(sh_env, env);
 	else

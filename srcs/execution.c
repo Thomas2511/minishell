@@ -7,7 +7,7 @@ static int		execution_son_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	signal(SIGCONT, SIG_DFL);
+	signal(SIGTSTP, SIG_DFL);
 	return (0);
 }
 
@@ -15,7 +15,7 @@ static int		execution_father_signals(void)
 {
 	signal(SIGINT, signals_modification);
 	signal(SIGQUIT, signals_modification);
-	signal(SIGCONT, signals_modification);
+	signal(SIGTSTP, signals_modification);
 	return (0);
 }
 

@@ -7,7 +7,7 @@ static char			*next_directory(char **end, int depth, char relative)
 	int				i;
 	int				found;
 	char			*to_free;
-	
+
 	i = 0;
 	if (relative && (*end)[0] == '/' && (*end)[1])
 	{
