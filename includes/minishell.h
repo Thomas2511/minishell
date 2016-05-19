@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/05/19 17:45:29 by tdieumeg          #+#    #+#             */
+/*   Updated: 2016/05/19 17:45:32 by tdieumeg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -7,7 +18,7 @@
 # define PATH_MAX 1024
 # define BUFF_SIZE 1024
 # define NUMBER_OF_SIGNALS 32
-# define NUMBER_OF_BUILTINS 5
+# define BUILTINS 5
 # define ERROR_FUNCTIONS 2
 # define STD_IN 0
 # define STD_OUT 1

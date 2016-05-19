@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/05/19 17:42:02 by tdieumeg          #+#    #+#             */
+/*   Updated: 2016/05/19 17:42:06 by tdieumeg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
@@ -30,7 +41,7 @@ static int		builtin_setenv(const char **command,
 		env_list_push(sh_env, env_list_new(command[1], command[2]));
 		return (1);
 	}
-	return(0);
+	return (0);
 }
 
 static int		builtin_unsetenv(const char **command,
@@ -85,9 +96,7 @@ int				builtin_check(const char **command,
 		t_env_list **sh_env, t_list **tokens)
 {
 	int			i;
-	int			(*f_ptr[NUMBER_OF_BUILTINS])(const char **,
-			t_env_list **,
-			t_list **);
+	int			(*f_ptr[BUILTINS])(const char **, t_env_list **, t_list **);
 
 	i = 0;
 	f_ptr[0] = builtin_exit;
@@ -95,7 +104,7 @@ int				builtin_check(const char **command,
 	f_ptr[2] = builtin_setenv;
 	f_ptr[3] = builtin_env;
 	f_ptr[4] = builtin_cd;
-	while (command && i < NUMBER_OF_BUILTINS)
+	while (command && i < BUILTINS)
 	{
 		if ((f_ptr[i])((const char **)command, sh_env, tokens))
 			return (1);

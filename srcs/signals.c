@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/05/19 17:44:19 by tdieumeg          #+#    #+#             */
+/*   Updated: 2016/05/19 17:44:21 by tdieumeg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <signal.h>
 #include "minishell.h"
 #include "libft.h"
@@ -27,7 +39,7 @@ int				signals_sigcont(void)
 
 void			signals_modification(int sig)
 {
-	int 		(*f_ptr[NUMBER_OF_SIGNALS])(void);
+	int			(*f_ptr[NUMBER_OF_SIGNALS])(void);
 
 	f_ptr[SIGINT] = signals_sigint;
 	f_ptr[SIGTSTP] = signals_sigtstp;

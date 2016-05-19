@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   display.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tdieumeg <tdieumeg@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/05/19 17:43:05 by tdieumeg          #+#    #+#             */
+/*   Updated: 2016/05/19 17:43:06 by tdieumeg         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <pwd.h>
 #include "minishell.h"
 #include "libft.h"
@@ -7,7 +19,7 @@ static int			check_for_tilde(char **cwd)
 	char			*home;
 	char			*tmp;
 	struct passwd	*pw;
-	
+
 	pw = getpwuid(getuid());
 	if ((home = ft_strdup(pw->pw_dir)) == NULL)
 		sh_error(0, NULL);
