@@ -115,18 +115,17 @@ int				command_handler(char **input, t_env_list **sh_env)
 	t_list		*tokens;
 	t_list		*head;
 
-	env = NULL;
 	command = NULL;
 	tokens = NULL;
 	lexer(input, &tokens);
 	head = tokens;
 	ft_memdel((void **)input);
-	env_list_to_arr_of_arr(sh_env, &env);
 	while (tokens_to_command(&tokens, &command))
 	{
 		if (builtin_check((const char **)command, sh_env, &head))
 			continue ;
-		else if (command && command_absolute_path(&(command[0]), *sh_env))
+		else if (command && command_absolute_path(&(command[0]), *sh_env) &&
+				!env_list_to_arr_of_arr(sh_env, &env))
 			execution(command, env);
 		else if (command)
 			sh_error(1, (const char **)command);
