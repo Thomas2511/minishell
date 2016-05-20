@@ -27,7 +27,7 @@ static int			solo_cd(t_env_list **sh_env)
 	}
 	return (1);
 }
-
+/*
 static int			two_arg_cd(const char **command, t_env_list **sh_env)
 {
 	char			cwd[PATH_MAX];
@@ -47,7 +47,7 @@ static int			two_arg_cd(const char **command, t_env_list **sh_env)
 	utility_join(&destination, (char *)command[2], 0);
 	utility_join(&destination, ft_strsub(cwd, at - cwd + ft_strlen(command[2]),
 		ft_strlen(cwd) - ((at - cwd) + ft_strlen(command[2]))), 1);
-	if (!test_destination(&destination, 0))
+	if (destination && !test_destination(&destination, 0))
 	{
 		chdir(destination);
 		env_insert(sh_env, "OLDPWD", env_get(*sh_env, "PWD"));
@@ -56,7 +56,7 @@ static int			two_arg_cd(const char **command, t_env_list **sh_env)
 	free(destination);
 	return (1);
 }
-
+*/
 static int			standard_cd(const char **command, t_env_list **sh_env)
 {
 	char			cwd[PATH_MAX];
@@ -92,8 +92,8 @@ int					builtin_cd(const char **command,
 			return (solo_cd(sh_env));
 		if (count == 2)
 			return (standard_cd(command, sh_env));
-		if (count == 3)
-			return (two_arg_cd(command, sh_env));
+		/*if (count == 3)
+			return (two_arg_cd(command, sh_env));*/
 		return (ft_putendl_fd("cd: too many arguments", STD_ERR));
 	}
 	return (0);

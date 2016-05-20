@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <sys/stat.h>
+#include <pwd.h>
 #include "minishell.h"
 #include "libft.h"
 
@@ -40,6 +41,25 @@ static char			*next_directory(char **end, int depth, char relative)
 	return (ft_strsub(*end, 0, found));
 }
 
+int					resolve_tilde(char **end)
+{
+	struct passwd	*pw;
+	char			*to_free;
+	char			*home;
+
+	if ((*end)[0] == '~')
+	{
+		pw = getpwuid(getuid());
+		if ((home = ft_strdup(pw->pw_dir)) == NULL)
+			sh_error(0, NULL);
+		to_free = *end;
+		*end = ft_strjoin(home, *end + 1);
+		free(to_free);
+		free(home);
+	}
+	return (0);
+}
+
 int					test_destination(char **end, int depth)
 {
 	struct stat		s;
@@ -49,6 +69,7 @@ int					test_destination(char **end, int depth)
 	val = 0;
 	if (!end)
 		return (1);
+	resolve_tilde(end);
 	next = next_directory(end, depth + 1, 0);
 	if (access(next, F_OK) == -1)
 	{

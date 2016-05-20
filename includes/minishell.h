@@ -117,6 +117,7 @@ int						builtin_cd(const char **env_command,
 /*
 ** builtin_cd_test.c
 */
+int						resolve_tilde(char **end);
 int						test_destination(char **end, int depth);
 
 /*
