@@ -38,7 +38,7 @@ static int		builtin_setenv(const char **command,
 			return (builtin_display_env(sh_env) + 1);
 		if (arr_of_arr_count(command) > 3)
 			return (ft_putendl_fd("setenv: too many arguments", STD_ERR));
-		env_list_push(sh_env, env_list_new(command[1], command[2]));
+		env_insert(sh_env, command[1], command[2]);
 		return (1);
 	}
 	return (0);
@@ -72,7 +72,7 @@ static int		builtin_exit(const char **command,
 	int			exit_value;
 
 	i = 0;
-	exit_value = 1;
+	exit_value = 0;
 	if (ft_strequ(command[0], "exit"))
 	{
 		if (arr_of_arr_count(command) > 2)
@@ -81,7 +81,7 @@ static int		builtin_exit(const char **command,
 		{
 			while (command[1] && command[1][i] && ft_isdigit(command[1][i]))
 				++i;
-			if (command[1] && ft_isdigit(command[1][i]))
+			if (command[1] && !command[1][i])
 				exit_value = ft_atoi(command[1]);
 			arr_of_arr_free((char ***)&command);
 			env_list_free(sh_env);

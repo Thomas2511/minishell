@@ -124,7 +124,7 @@ int				command_handler(char **input, t_env_list **sh_env)
 	env_list_to_arr_of_arr(sh_env, &env);
 	while (tokens_to_command(&tokens, &command))
 	{
-		if (builtin_check((const char **)command, sh_env, &tokens))
+		if (builtin_check((const char **)command, sh_env, &head))
 			continue ;
 		else if (command && command_absolute_path(&(command[0]), *sh_env))
 			execution(command, env);

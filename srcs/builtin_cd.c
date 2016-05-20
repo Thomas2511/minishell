@@ -69,7 +69,7 @@ static int			standard_cd(const char **command, t_env_list **sh_env)
 		destination = env_get(*sh_env, "OLDPWD");
 	else
 		destination = ft_strdup(command[1]);
-	if (!test_destination(&destination, 0))
+	if (destination && !test_destination(&destination, 0))
 	{
 		chdir(destination);
 		env_insert(sh_env, "OLDPWD", env_get(*sh_env, "PWD"));
