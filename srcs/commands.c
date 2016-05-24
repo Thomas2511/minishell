@@ -115,6 +115,7 @@ int				command_handler(char **input, t_env_list **sh_env)
 	t_list		*tokens;
 	t_list		*head;
 
+	env = NULL;
 	command = NULL;
 	tokens = NULL;
 	lexer(input, &tokens);
